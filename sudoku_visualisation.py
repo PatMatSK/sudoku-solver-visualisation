@@ -1,3 +1,4 @@
+""" Sudoku solving visualisation """
 import tkinter as tk
 from tkinter import filedialog
 
@@ -11,24 +12,30 @@ canvas = tk.Canvas(root, width=GRID_SIZE+2*OFFSET, height=GRID_SIZE+2*OFFSET)
 canvas.pack()
 data = []
 numbers = []
+squares = []
 
 
 def initiate_grid():
+    """ Draw baselines """
     for i in range(0, GRID_SIZE + SQUARE_SIZE, SQUARE_SIZE):  # to also draw last line
         canvas.create_line(OFFSET, i+OFFSET, GRID_SIZE+OFFSET, i+OFFSET)
         canvas.create_line(i+OFFSET, OFFSET, i+OFFSET, GRID_SIZE+OFFSET)
 
 
 def clean():
-    global numbers
+    """ Delete data from previous calculations """
+    global numbers, data
     for row in numbers:
         for num in row:
             canvas.delete(num)
+    for sq in squares:
+        canvas.delete(sq)
+    numbers, data = [], []
     canvas.update()
-    numbers = []
 
 
 def get_data():
+    """ Get data from file if was given """
     global data, numbers
     clean()
     file_name = filedialog.askopenfilename(parent=root, title="Choose file", filetypes=[("Txt files", "*.txt")])
@@ -41,22 +48,25 @@ def get_data():
 
 
 def set_data():
+    """ Draw base numbers and set base grid """
     global data, numbers
     input_data = get_data()
     if not input_data:
         return
 
     numbers, data = [], []
-    y = OFFSET + SQUARE_SIZE/2
-
-    for i in input_data:
+    diff = SQUARE_SIZE/2
+    y = OFFSET + diff
+    for i in input_data:            # set initial grid
         data_row, can_row = [], []
         x = OFFSET + SQUARE_SIZE/2
         for s in i.split():
             data_row.append(int(s))
             if s == "0":
                 s = ""
-            can_row.append(canvas.create_text(x, y, text=str(s), font=("Purisa", 12)))
+            else:
+                squares.append(canvas.create_rectangle(x-diff, y-diff, x+diff, y+diff,  fill='lightgrey'))
+            can_row.append(canvas.create_text(x, y, text=str(s), font=('Purist', 25)))
             x += SQUARE_SIZE
         data.append(data_row)
         numbers.append(can_row)
@@ -66,6 +76,7 @@ def set_data():
 
 
 def check(row, column, number):
+    """ Check if number can be placed in row and column """
     if number in data[row]:
         return False
     for s in data:
@@ -81,16 +92,18 @@ def check(row, column, number):
 
 
 def edit(x, y, val):
+    """ Display value and store to data """
     global data
     data[y][x] = val
     if val == 0:
         val = ""
-    canvas.itemconfig(numbers[y][x], text=str(val), fill='red')
+    canvas.itemconfig(numbers[y][x], text=str(val), fill='red', font=('Purist', 25))
     canvas.after(TIME_OUT)
     canvas.update()
 
 
 def solve_sudoku():
+    """ Solve sudoku with bruteforce  """
     global data
     for y in range(0, 9):
         for x in range(0, 9):
@@ -107,6 +120,7 @@ def solve_sudoku():
 
 
 def solve_manager():
+    """ Disable buttons until sudoku is solved """
     if not data:
         return
     load_button["state"] = "disabled"
