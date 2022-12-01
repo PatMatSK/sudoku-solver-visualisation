@@ -32,16 +32,25 @@ def get_data():
     global data, numbers
     clean()
     file_name = filedialog.askopenfilename(parent=root, title="Choose file", filetypes=[("Txt files", "*.txt")])
+    if file_name == "":
+        return False
     file = open(file_name, "r")
     input_data = file.read().split("\n")
     file.close()
+    return input_data
+
+
+def set_data():
+    global data, numbers
+    input_data = get_data()
+    if not input_data:
+        return
 
     numbers, data = [], []
     y = OFFSET + SQUARE_SIZE/2
 
     for i in input_data:
-        data_row = []
-        can_row = []
+        data_row, can_row = [], []
         x = OFFSET + SQUARE_SIZE/2
         for s in i.split():
             data_row.append(int(s))
@@ -89,15 +98,17 @@ def solve_sudoku():
                 for number in range(1, 10):
                     if check(y, x, number):
                         edit(x, y, number)
-                        if not solve_sudoku():
-                            edit(x, y, 0)
-                        else:
+                        if solve_sudoku():
                             return True
+                        edit(x, y, 0)
+
                 return False
     return True
 
 
-def solve_menager():
+def solve_manager():
+    if not data:
+        return
     load_button["state"] = "disabled"
     solve_button["state"] = "disabled"
     solve_sudoku()
@@ -107,9 +118,9 @@ def solve_menager():
 
 initiate_grid()
 
-load_button = tk.Button(root, text="load sudoku", command=get_data)
+load_button = tk.Button(root, text="load sudoku", command=set_data)
 load_button.pack()
-solve_button = tk.Button(root, text="SOLVE", command=solve_menager)
+solve_button = tk.Button(root, text="SOLVE", command=solve_manager)
 solve_button.pack()
 
 root.mainloop()
