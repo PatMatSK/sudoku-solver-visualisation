@@ -2,10 +2,10 @@
 import tkinter as tk
 from tkinter import filedialog
 
+TIME_OUT = 10
 OFFSET = 5
 SQUARE_SIZE = 50
 GRID_SIZE = 9 * SQUARE_SIZE
-TIME_OUT = 10
 root = tk.Tk()
 root.title("Sudoku")
 canvas = tk.Canvas(root, width=GRID_SIZE+2*OFFSET, height=GRID_SIZE+2*OFFSET)
@@ -13,13 +13,21 @@ canvas.pack()
 data = []
 numbers = []
 squares = []
+lines = []
 
 
 def initiate_grid():
     """ Draw baselines """
+    for line in lines:
+        canvas.delete(line)
+
     for i in range(0, GRID_SIZE + SQUARE_SIZE, SQUARE_SIZE):  # to also draw last line
-        canvas.create_line(OFFSET, i+OFFSET, GRID_SIZE+OFFSET, i+OFFSET)
-        canvas.create_line(i+OFFSET, OFFSET, i+OFFSET, GRID_SIZE+OFFSET)
+        if i % 3 == 0:
+            lines.append(canvas.create_line(OFFSET, i+OFFSET, GRID_SIZE+OFFSET, i+OFFSET, width=3))
+            lines.append(canvas.create_line(i+OFFSET, OFFSET, i+OFFSET, GRID_SIZE+OFFSET, width=3))
+        else:
+            lines.append(canvas.create_line(OFFSET, i+OFFSET, GRID_SIZE+OFFSET, i+OFFSET))
+            lines.append(canvas.create_line(i+OFFSET, OFFSET, i+OFFSET, GRID_SIZE+OFFSET))
 
 
 def clean():
@@ -71,7 +79,7 @@ def set_data():
         data.append(data_row)
         numbers.append(can_row)
         y += SQUARE_SIZE
-
+    initiate_grid()
     canvas.update()
 
 
@@ -136,5 +144,7 @@ load_button = tk.Button(root, text="load sudoku", command=set_data)
 load_button.pack()
 solve_button = tk.Button(root, text="SOLVE", command=solve_manager)
 solve_button.pack()
+
+root.resizable(width=0, height=0)
 
 root.mainloop()
