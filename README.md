@@ -2,7 +2,7 @@ Sudoku solver visualisation
 -
 
 
-To solve sudoku is used brute force. Solver requires sudoku grid in .txt file(
+To solve sudoku is used brute force. Solver requires sudoku grid in .txt file(detailed description below).
 
 Requirements:
 - tkinter
