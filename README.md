@@ -1,7 +1,20 @@
-# sudoku-solver-visualisation
+Sudoku solver visualisation
+-
 
-Visualiser of bruteforce sudoku solver
 
-As input expected 9 lines of 9 numbers 0 <= num <= 9. 0 represents empty place.
-No newline at the end of inputfile required.
-For input example check examples
+To solve sudoku is used brute force. Solver requires sudoku grid in .txt file(
+
+Requirements:
+- tkinter
+
+
+Sudoku gird requirements:
+- txt file with 9 lines
+- each line contains 9 digits separated with whitespace
+- 0 represents empty place
+- no newline after last digit
+
+
+To run visualiser simply run program with your python version:
+ - python3 sudoku_visualisation.py
+ 
